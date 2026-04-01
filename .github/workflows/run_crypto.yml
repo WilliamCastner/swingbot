@@ -33,6 +33,9 @@ jobs:
           echo "ALPACA_SECRET_KEY=${{ secrets.ALPACA_SECRET_KEY }}" >> .env
           echo "ALPACA_PAPER=true" >> .env
 
+      - name: Run crypto strategy comparison
+        run: python scripts/run_crypto_strategies.py
+
       - name: Run crypto bot
         run: python scripts/run_crypto_bot.py
 
@@ -43,6 +46,6 @@ jobs:
         run: |
           git config user.name "SwingBot"
           git config user.email "swingbot@users.noreply.github.com"
-          git add logs/crypto/ dashboard.html
+          git add logs/crypto/ logs/crypto_strategies/ dashboard.html
           git diff --staged --quiet || git commit -m "Crypto run $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push

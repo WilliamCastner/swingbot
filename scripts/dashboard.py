@@ -16,13 +16,14 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-LOGS          = Path('logs')
-TRADE_LOG     = LOGS / 'trades.csv'
-PNL_LOG       = LOGS / 'daily_pnl.csv'
-STRAT_LOGS    = LOGS / 'strategies'
-CRYPTO_TRADES = LOGS / 'crypto' / 'trades.csv'
-CRYPTO_PNL    = LOGS / 'crypto' / 'pnl.csv'
-OUT           = Path('dashboard.html')
+LOGS               = Path('logs')
+TRADE_LOG          = LOGS / 'trades.csv'
+PNL_LOG            = LOGS / 'daily_pnl.csv'
+STRAT_LOGS         = LOGS / 'strategies'
+CRYPTO_TRADES      = LOGS / 'crypto' / 'trades.csv'
+CRYPTO_PNL         = LOGS / 'crypto' / 'pnl.csv'
+CRYPTO_STRAT_LOGS  = LOGS / 'crypto_strategies'
+OUT                = Path('dashboard.html')
 
 COLORS = [
     '#00c896', '#4a9eff', '#ff6b6b', '#ffd93d', '#c77dff',
@@ -58,6 +59,35 @@ def read_strategy_data():
             'name': name,
             'pnl_rows': pnl_rows,
             'trades': trades,
+            'current_value': float(latest['portfolio_value']),
+            'total_pnl': float(latest['total_pnl']),
+            'total_pnl_pct': float(latest['total_pnl_pct']),
+            'drawdown_pct': float(latest['drawdown_pct']),
+            'n_trades': len(trades),
+        })
+    strategies.sort(key=lambda s: s['total_pnl_pct'], reverse=True)
+    return strategies
+
+
+def read_crypto_strategy_data():
+    strategies = []
+    if not CRYPTO_STRAT_LOGS.exists():
+        return strategies
+    for slug_dir in sorted(CRYPTO_STRAT_LOGS.iterdir()):
+        if not slug_dir.is_dir():
+            continue
+        pnl_file = slug_dir / 'pnl.csv'
+        if not pnl_file.exists():
+            continue
+        name_file = slug_dir / 'name.txt'
+        name = name_file.read_text().strip() if name_file.exists() else slug_dir.name.replace('_', ' ').title()
+        pnl_rows = read_csv(pnl_file)
+        trades = read_csv(slug_dir / 'trades.csv') if (slug_dir / 'trades.csv').exists() else []
+        if not pnl_rows:
+            continue
+        latest = pnl_rows[-1]
+        strategies.append({
+            'name': name, 'pnl_rows': pnl_rows, 'trades': trades,
             'current_value': float(latest['portfolio_value']),
             'total_pnl': float(latest['total_pnl']),
             'total_pnl_pct': float(latest['total_pnl_pct']),
@@ -126,7 +156,43 @@ def build_crypto_section(crypto_trades, crypto_pnl):
     return cards, ts_js, vals_js, trade_rows
 
 
-def build_html(trades, pnl_rows, strategies, crypto_trades, crypto_pnl):
+def build_crypto_leaderboard(crypto_strategies):
+    rows = ''
+    for i, s in enumerate(crypto_strategies):
+        pct = s['total_pnl_pct']
+        pnl = s['total_pnl']
+        color = '#00c896' if pct >= 0 else '#ff4d4d'
+        sign_s = '+' if pct >= 0 else ''
+        medal = ['🥇', '🥈', '🥉'][i] if i < 3 else f'{i+1}.'
+        rows += f"""
+        <tr>
+          <td style="color:#666">{medal}</td>
+          <td><strong>{s['name']}</strong></td>
+          <td>${s['current_value']:,.2f}</td>
+          <td style="color:{color};font-weight:700">{sign_s}{pct:.2f}%</td>
+          <td style="color:{color}">{sign_s}${pnl:,.2f}</td>
+          <td style="color:#ff4d4d">{s['drawdown_pct']:.2f}%</td>
+          <td>{s['n_trades']}</td>
+        </tr>"""
+    if not rows:
+        rows = '<tr><td colspan="7" style="color:#555;text-align:center;padding:20px">No crypto strategy data yet — run scripts/run_crypto_strategies.py</td></tr>'
+
+    datasets = []
+    for i, s in enumerate(crypto_strategies):
+        color = COLORS[i % len(COLORS)]
+        dates  = [r['date'] for r in s['pnl_rows']]
+        values = [float(r['portfolio_value']) for r in s['pnl_rows']]
+        datasets.append(
+            f'{{"label":{json.dumps(s["name"])},'
+            f'"data":{json.dumps([{"x": d, "y": v} for d, v in zip(dates, values)])},'
+            f'"borderColor":"{color}","backgroundColor":"transparent",'
+            f'"borderWidth":2,"pointRadius":0,"tension":0.3}}'
+        )
+    datasets_js = '[' + ','.join(datasets) + ']' if datasets else '[]'
+    return rows, datasets_js
+
+
+def build_html(trades, pnl_rows, strategies, crypto_trades, crypto_pnl, crypto_strategies):
     # ── main bot summary ───────────────────────────────────────────────────────
     start_val  = float(pnl_rows[0]['portfolio_value'])  if pnl_rows else 100_000
     latest_val = float(pnl_rows[-1]['portfolio_value']) if pnl_rows else 100_000
@@ -197,6 +263,7 @@ def build_html(trades, pnl_rows, strategies, crypto_trades, crypto_pnl):
 
     crypto_cards, crypto_ts_js, crypto_vals_js, crypto_trade_rows = build_crypto_section(
         crypto_trades, crypto_pnl)
+    crypto_strat_rows, crypto_strat_datasets_js = build_crypto_leaderboard(crypto_strategies)
 
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
 
@@ -305,6 +372,21 @@ def build_html(trades, pnl_rows, strategies, crypto_trades, crypto_pnl):
   <tbody>{crypto_trade_rows}</tbody>
 </table>
 
+<!-- ── Crypto Strategy Leaderboard ───────────────────────────── -->
+<div class="section-label">Crypto Strategy Comparison (10 Virtual Portfolios · $100k each)</div>
+<table>
+  <thead>
+    <tr><th>#</th><th>Strategy</th><th>Value</th><th>Return</th><th>P&amp;L</th><th>Drawdown</th><th>Trades</th></tr>
+  </thead>
+  <tbody>{crypto_strat_rows}</tbody>
+</table>
+<div class="charts">
+  <div class="chart-box full">
+    <div class="chart-title">Crypto Strategy Equity Curves</div>
+    <canvas id="cryptoStratChart" height="90"></canvas>
+  </div>
+</div>
+
 <!-- ── Stock Trade Log ────────────────────────────────────────── -->
 <div class="section-label">Stock Bot Trade Log</div>
 <table>
@@ -383,7 +465,24 @@ if (cryptoTs.length > 0) {{
   }});
 }}
 
-// Strategy equity curves
+// Crypto strategy equity curves
+const cryptoStratDatasets = {crypto_strat_datasets_js};
+if (cryptoStratDatasets.length > 0) {{
+  new Chart(document.getElementById('cryptoStratChart'), {{
+    type: 'line',
+    data: {{ datasets: cryptoStratDatasets }},
+    options: {{
+      parsing: false,
+      plugins: {{ legend: {{ display: true, labels: {{ color: '#666', boxWidth: 12, font: {{ size: 11 }} }} }} }},
+      scales: {{
+        x: {{ type: 'time', time: {{ unit: 'day' }}, ticks: {{ color: tickColor, maxTicksLimit: 8 }}, grid: {{ color: gridColor }} }},
+        y: {{ ticks: {{ color: tickColor, callback: v => '$' + v.toLocaleString() }}, grid: {{ color: gridColor }} }}
+      }}
+    }}
+  }});
+}}
+
+// Stock strategy equity curves
 const stratDatasets = {strat_datasets_js};
 if (stratDatasets.length > 0) {{
   new Chart(document.getElementById('stratChart'), {{
@@ -424,9 +523,11 @@ def main(no_browser: bool = False):
     trades        = read_csv(TRADE_LOG)
     pnl_rows      = read_csv(PNL_LOG)
     strategies    = read_strategy_data()
-    crypto_trades = read_csv(CRYPTO_TRADES)
-    crypto_pnl    = read_csv(CRYPTO_PNL)
-    html          = build_html(trades, pnl_rows, strategies, crypto_trades, crypto_pnl)
+    crypto_trades     = read_csv(CRYPTO_TRADES)
+    crypto_pnl        = read_csv(CRYPTO_PNL)
+    crypto_strategies = read_crypto_strategy_data()
+    html              = build_html(trades, pnl_rows, strategies,
+                                   crypto_trades, crypto_pnl, crypto_strategies)
     OUT.write_text(html, encoding='utf-8')
     print(f"Dashboard written to {OUT.resolve()}")
     print(f"  Main bot trades: {len(trades)}")
