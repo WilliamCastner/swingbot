@@ -23,6 +23,7 @@ load_dotenv()
 from bot.crypto_data import get_crypto_watchlist_data, CRYPTO_WATCHLIST, yf_to_alpaca
 from bot.crypto_strategy import compute_crypto_signal
 from bot.crypto_execution import get_crypto_positions, place_crypto_buy, close_crypto_position
+from bot.execution import get_account
 
 LOG_DIR    = Path('logs/crypto')
 TRADE_LOG  = LOG_DIR / 'trades.csv'
@@ -105,7 +106,7 @@ def main(dry_run: bool = False):
     _ensure_logs()
     state = load_state()
 
-    print(f'\nCrypto bot starting — {datetime.now().strftime("%Y-%m-%d %H:%M")}')
+    print(f'\nCrypto bot starting - {datetime.now().strftime("%Y-%m-%d %H:%M")}')
     print(f'Watchlist: {", ".join(CRYPTO_WATCHLIST)}')
 
     # Fetch market data
@@ -121,26 +122,40 @@ def main(dry_run: bool = False):
         signals.append(result)
         print(f'  {symbol:<10} {result.signal:4s} | RSI(7)={result.rsi:.1f} | {result.reason}')
 
-    # Get current positions
+    # Get current positions and real account balance
     try:
         positions = get_crypto_positions()
     except Exception as e:
         print(f'Warning: could not fetch positions: {e}')
         positions = {}
 
+    try:
+        from alpaca.trading.client import TradingClient
+        import os
+        _client = TradingClient(os.getenv('ALPACA_API_KEY'), os.getenv('ALPACA_SECRET_KEY'), paper=True)
+        _acct = _client.get_account()
+        # non_marginable_buying_power = actual cash available without margin
+        cash_estimate = float(_acct.non_marginable_buying_power)
+    except Exception as e:
+        print(f'Warning: could not fetch account: {e}')
+        deployed = sum(p['market_value'] for p in positions.values())
+        cash_estimate = max(state.get('starting_cash', STARTING_CASH) - deployed, 0)
+
     # Current prices from signals
     prices = {yf_to_alpaca(s.symbol): s.price for s in signals}
+    crypto_market_value = sum(p['market_value'] for p in positions.values())
+    portfolio_value = crypto_market_value + cash_estimate
 
-    # Estimate cash (rough: starting cash minus deployed capital)
-    deployed = sum(p['market_value'] for p in positions.values())
-    cash_estimate = max(state.get('starting_cash', STARTING_CASH) - deployed, 0)
-    portfolio_value = sum(p['market_value'] for p in positions.values()) + cash_estimate
+    # Initialize starting cash from real balance on first run
+    if 'starting_cash' not in state or state['starting_cash'] == STARTING_CASH:
+        state['starting_cash'] = portfolio_value
+        state['peak_value'] = portfolio_value
 
-    # Kill switch
-    peak = state.get('peak_value', STARTING_CASH)
+    # Kill switch — only on crypto-specific drawdown
+    peak = state.get('peak_value', portfolio_value)
     drawdown = (peak - portfolio_value) / peak if peak else 0
     if drawdown >= KILL_SWITCH_PCT:
-        print(f'KILL SWITCH: drawdown {drawdown:.1%} exceeds {KILL_SWITCH_PCT:.0%}')
+        print(f'KILL SWITCH: crypto drawdown {drawdown:.1%} exceeds {KILL_SWITCH_PCT:.0%}')
         log_pnl(portfolio_value, state)
         save_state(state)
         return
