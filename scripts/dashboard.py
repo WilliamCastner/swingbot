@@ -16,11 +16,13 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-LOGS       = Path('logs')
-TRADE_LOG  = LOGS / 'trades.csv'
-PNL_LOG    = LOGS / 'daily_pnl.csv'
-STRAT_LOGS = LOGS / 'strategies'
-OUT        = Path('dashboard.html')
+LOGS          = Path('logs')
+TRADE_LOG     = LOGS / 'trades.csv'
+PNL_LOG       = LOGS / 'daily_pnl.csv'
+STRAT_LOGS    = LOGS / 'strategies'
+CRYPTO_TRADES = LOGS / 'crypto' / 'trades.csv'
+CRYPTO_PNL    = LOGS / 'crypto' / 'pnl.csv'
+OUT           = Path('dashboard.html')
 
 COLORS = [
     '#00c896', '#4a9eff', '#ff6b6b', '#ffd93d', '#c77dff',
@@ -66,7 +68,65 @@ def read_strategy_data():
     return strategies
 
 
-def build_html(trades, pnl_rows, strategies):
+def build_crypto_section(crypto_trades, crypto_pnl):
+    if not crypto_pnl:
+        return '', '', '', '', '', ''
+
+    latest = crypto_pnl[-1]
+    starting = 100_000.0
+    curr_val = float(latest['portfolio_value'])
+    total_pnl = float(latest['total_pnl'])
+    total_pct = float(latest['total_pnl_pct'])
+    drawdown = float(latest['drawdown_pct'])
+    sign = '+' if total_pnl >= 0 else ''
+    color = '#00c896' if total_pnl >= 0 else '#ff4d4d'
+    dd_color = '#ff4d4d' if drawdown > 5 else '#aaa'
+
+    cards = f"""
+  <div class="card">
+    <div class="label">Crypto Value</div>
+    <div class="val">${curr_val:,.2f}</div>
+  </div>
+  <div class="card">
+    <div class="label">Crypto P&amp;L</div>
+    <div class="val" style="color:{color}">{sign}${total_pnl:,.2f}</div>
+  </div>
+  <div class="card">
+    <div class="label">Crypto Return</div>
+    <div class="val" style="color:{color}">{sign}{total_pct:.2f}%</div>
+  </div>
+  <div class="card">
+    <div class="label">Crypto Drawdown</div>
+    <div class="val" style="color:{dd_color}">{drawdown:.2f}%</div>
+  </div>
+  <div class="card">
+    <div class="label">Crypto Trades</div>
+    <div class="val">{len(crypto_trades)}</div>
+  </div>"""
+
+    timestamps = [r['timestamp'][:10] for r in crypto_pnl]
+    values = [float(r['portfolio_value']) for r in crypto_pnl]
+    ts_js = json.dumps(timestamps)
+    vals_js = json.dumps(values)
+
+    trade_rows = ''
+    for t in reversed(crypto_trades[-20:]):
+        side_color = '#00c896' if t['side'] == 'BUY' else '#ff4d4d'
+        ts = t['timestamp'][:16].replace('T', ' ')
+        trade_rows += f"""
+        <tr>
+          <td>{ts}</td><td><strong>{t['symbol']}</strong></td>
+          <td style="color:{side_color};font-weight:700">{t['side']}</td>
+          <td>{float(t['qty']):.4f}</td><td>${float(t['price']):.4f}</td>
+          <td style="color:#aaa;font-size:0.85em">{t.get('reason','')}</td>
+        </tr>"""
+    if not trade_rows:
+        trade_rows = '<tr><td colspan="6" style="color:#555;text-align:center;padding:20px">No crypto trades yet.</td></tr>'
+
+    return cards, ts_js, vals_js, trade_rows
+
+
+def build_html(trades, pnl_rows, strategies, crypto_trades, crypto_pnl):
     # ── main bot summary ───────────────────────────────────────────────────────
     start_val  = float(pnl_rows[0]['portfolio_value'])  if pnl_rows else 100_000
     latest_val = float(pnl_rows[-1]['portfolio_value']) if pnl_rows else 100_000
@@ -134,6 +194,9 @@ def build_html(trades, pnl_rows, strategies):
                 f'"borderWidth":2,"pointRadius":0,"tension":0.3}}'
             )
         strat_datasets_js = '[' + ','.join(datasets) + ']'
+
+    crypto_cards, crypto_ts_js, crypto_vals_js, crypto_trade_rows = build_crypto_section(
+        crypto_trades, crypto_pnl)
 
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
 
@@ -226,8 +289,24 @@ def build_html(trades, pnl_rows, strategies):
   </div>
 </div>
 
-<!-- ── Trade Log ──────────────────────────────────────────────── -->
-<div class="section-label">Main Bot Trade Log</div>
+<!-- ── Crypto Bot ─────────────────────────────────────────────── -->
+<div class="section-label">Crypto Bot (SOL · ETH · DOGE · AVAX · Runs every 4h)</div>
+<div class="cards">{crypto_cards}</div>
+<div class="charts">
+  <div class="chart-box full">
+    <div class="chart-title">Crypto Portfolio Value</div>
+    <canvas id="cryptoChart" height="100"></canvas>
+  </div>
+</div>
+<table>
+  <thead>
+    <tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Price</th><th>Reason</th></tr>
+  </thead>
+  <tbody>{crypto_trade_rows}</tbody>
+</table>
+
+<!-- ── Stock Trade Log ────────────────────────────────────────── -->
+<div class="section-label">Stock Bot Trade Log</div>
 <table>
   <thead>
     <tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Price</th><th>RSI</th><th>Reason</th></tr>
@@ -279,6 +358,31 @@ new Chart(document.getElementById('ddChart'), {{
   }}
 }});
 
+// Crypto chart
+const cryptoTs = {crypto_ts_js};
+const cryptoVals = {crypto_vals_js};
+if (cryptoTs.length > 0) {{
+  new Chart(document.getElementById('cryptoChart'), {{
+    type: 'line',
+    data: {{
+      labels: cryptoTs,
+      datasets: [{{
+        data: cryptoVals,
+        borderColor: '#ffd93d',
+        backgroundColor: 'rgba(255,217,61,0.07)',
+        borderWidth: 2, pointRadius: 0, fill: true, tension: 0.3,
+      }}]
+    }},
+    options: {{
+      plugins: {{ legend: {{ display: false }} }},
+      scales: {{
+        x: {{ ticks: {{ color: tickColor, maxTicksLimit: 8 }}, grid: {{ color: gridColor }} }},
+        y: {{ ticks: {{ color: tickColor, callback: v => '$' + v.toLocaleString() }}, grid: {{ color: gridColor }} }}
+      }}
+    }}
+  }});
+}}
+
 // Strategy equity curves
 const stratDatasets = {strat_datasets_js};
 if (stratDatasets.length > 0) {{
@@ -317,10 +421,12 @@ if (stratDatasets.length > 0) {{
 
 
 def main(no_browser: bool = False):
-    trades     = read_csv(TRADE_LOG)
-    pnl_rows   = read_csv(PNL_LOG)
-    strategies = read_strategy_data()
-    html       = build_html(trades, pnl_rows, strategies)
+    trades        = read_csv(TRADE_LOG)
+    pnl_rows      = read_csv(PNL_LOG)
+    strategies    = read_strategy_data()
+    crypto_trades = read_csv(CRYPTO_TRADES)
+    crypto_pnl    = read_csv(CRYPTO_PNL)
+    html          = build_html(trades, pnl_rows, strategies, crypto_trades, crypto_pnl)
     OUT.write_text(html, encoding='utf-8')
     print(f"Dashboard written to {OUT.resolve()}")
     print(f"  Main bot trades: {len(trades)}")
