@@ -1,0 +1,2 @@
+timestamp,symbol,side,qty,price,pnl,reason
+2026-04-01T16:44:49.111475,ETH-USD,BUY,44.28016761,2145.43,0.0,5EMA crossed above 13EMA
