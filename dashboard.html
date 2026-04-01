@@ -32,22 +32,22 @@
 <body>
 
 <h1>SwingBot Dashboard</h1>
-<div class="sub">Updated 2026-04-01 20:36 &nbsp;·&nbsp; Paper trading &nbsp;·&nbsp; NVDA · TSLA · AMD · COIN · SPY</div>
+<div class="sub">Updated 2026-04-01 21:59 &nbsp;·&nbsp; Paper trading &nbsp;·&nbsp; NVDA · TSLA · AMD · COIN · SPY</div>
 
 <!-- ── Main Bot Summary ───────────────────────────────────────── -->
 <div class="section-label">Main Bot (Alpaca Paper)</div>
 <div class="cards">
   <div class="card">
     <div class="label">Portfolio Value</div>
-    <div class="val">$101,817.39</div>
+    <div class="val">$104,330.35</div>
   </div>
   <div class="card">
     <div class="label">Total P&amp;L</div>
-    <div class="val" style="color:#00c896">+$1,817.39</div>
+    <div class="val" style="color:#00c896">+$4,330.35</div>
   </div>
   <div class="card">
     <div class="label">Total Return</div>
-    <div class="val" style="color:#00c896">+1.82%</div>
+    <div class="val" style="color:#00c896">+4.33%</div>
   </div>
   <div class="card">
     <div class="label">Max Drawdown</div>
@@ -79,37 +79,37 @@
   <tbody>
         <tr>
           <td style="color:#666">🥇</td>
-          <td><strong>ATR Keltner Channel</strong></td>
-          <td>$104,145.00</td>
-          <td style="color:#00c896;font-weight:700">+4.14%</td>
-          <td style="color:#00c896">+$4,145.00</td>
+          <td><strong>Stochastic Oscillator</strong></td>
+          <td>$106,034.88</td>
+          <td style="color:#00c896;font-weight:700">+6.04%</td>
+          <td style="color:#00c896">+$6,034.88</td>
           <td style="color:#ff4d4d">0.00%</td>
-          <td>1</td>
+          <td>2</td>
         </tr>
         <tr>
           <td style="color:#666">🥈</td>
-          <td><strong>Stochastic Oscillator</strong></td>
-          <td>$102,827.34</td>
-          <td style="color:#00c896;font-weight:700">+2.83%</td>
-          <td style="color:#00c896">+$2,827.34</td>
+          <td><strong>Williams %R</strong></td>
+          <td>$106,034.88</td>
+          <td style="color:#00c896;font-weight:700">+6.04%</td>
+          <td style="color:#00c896">+$6,034.88</td>
           <td style="color:#ff4d4d">0.00%</td>
           <td>2</td>
         </tr>
         <tr>
           <td style="color:#666">🥉</td>
-          <td><strong>Williams %R</strong></td>
-          <td>$102,827.34</td>
-          <td style="color:#00c896;font-weight:700">+2.83%</td>
-          <td style="color:#00c896">+$2,827.34</td>
+          <td><strong>ATR Keltner Channel</strong></td>
+          <td>$103,225.15</td>
+          <td style="color:#00c896;font-weight:700">+3.23%</td>
+          <td style="color:#00c896">+$3,225.15</td>
           <td style="color:#ff4d4d">0.00%</td>
-          <td>2</td>
+          <td>1</td>
         </tr>
         <tr>
           <td style="color:#666">4.</td>
           <td><strong>RSI Mean Reversion</strong></td>
-          <td>$102,347.10</td>
-          <td style="color:#00c896;font-weight:700">+2.35%</td>
-          <td style="color:#00c896">+$2,347.10</td>
+          <td>$103,142.52</td>
+          <td style="color:#00c896;font-weight:700">+3.14%</td>
+          <td style="color:#00c896">+$3,142.52</td>
           <td style="color:#ff4d4d">0.00%</td>
           <td>3</td>
         </tr>
@@ -138,7 +138,7 @@
           <td style="color:#00c896;font-weight:700">+0.00%</td>
           <td style="color:#00c896">+$0.00</td>
           <td style="color:#ff4d4d">0.00%</td>
-          <td>0</td>
+          <td>1</td>
         </tr>
         <tr>
           <td style="color:#666">8.</td>
@@ -355,9 +355,9 @@ const tickColor = '#444';
 new Chart(document.getElementById('valueChart'), {
   type: 'line',
   data: {
-    labels: ["2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01"],
+    labels: ["2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01"],
     datasets: [{
-      data: [100000.0, 100000.0, 100000.0, 101817.39],
+      data: [100000.0, 100000.0, 100000.0, 101817.39, 104330.35],
       borderColor: '#00c896', backgroundColor: 'rgba(0,200,150,0.07)',
       borderWidth: 2, pointRadius: 0, fill: true, tension: 0.3,
     }]
@@ -375,9 +375,9 @@ new Chart(document.getElementById('valueChart'), {
 new Chart(document.getElementById('ddChart'), {
   type: 'line',
   data: {
-    labels: ["2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01"],
+    labels: ["2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01"],
     datasets: [{
-      data: [0.0, 0.0, 0.0, 0.0],
+      data: [0.0, 0.0, 0.0, 0.0, 0.0],
       borderColor: '#ff4d4d', backgroundColor: 'rgba(255,77,77,0.07)',
       borderWidth: 2, pointRadius: 0, fill: true, tension: 0.3,
     }]
@@ -434,7 +434,7 @@ if (cryptoStratDatasets.length > 0) {
 }
 
 // Stock strategy equity curves
-const stratDatasets = [{"label":"ATR Keltner Channel","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100085.18}, {"x": "2026-03-31", "y": 102533.45}, {"x": "2026-04-01", "y": 104145.0}],"borderColor":"#00c896","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Stochastic Oscillator","data":[{"x": "2026-03-31", "y": 100000.91}, {"x": "2026-03-31", "y": 100133.83}, {"x": "2026-03-31", "y": 101897.35}, {"x": "2026-04-01", "y": 102827.34}],"borderColor":"#4a9eff","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Williams %R","data":[{"x": "2026-03-31", "y": 100000.91}, {"x": "2026-03-31", "y": 100133.83}, {"x": "2026-03-31", "y": 101897.35}, {"x": "2026-04-01", "y": 102827.34}],"borderColor":"#ff6b6b","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"RSI Mean Reversion","data":[{"x": "2026-03-31", "y": 100002.79}, {"x": "2026-03-31", "y": 100093.89}, {"x": "2026-03-31", "y": 101705.94}, {"x": "2026-04-01", "y": 102347.1}],"borderColor":"#ffd93d","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"20-Day Breakout","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#c77dff","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Bollinger Bands","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#ff9f43","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"EMA Crossover 9/21","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#00d2d3","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"MA Crossover 50/200","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#ff6348","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"MACD Crossover","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#a29bfe","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"RSI + Volume","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#55efc4","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3}];
+const stratDatasets = [{"label":"Stochastic Oscillator","data":[{"x": "2026-03-31", "y": 100000.91}, {"x": "2026-03-31", "y": 100133.83}, {"x": "2026-03-31", "y": 101897.35}, {"x": "2026-04-01", "y": 102827.34}, {"x": "2026-04-01", "y": 106034.88}],"borderColor":"#00c896","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Williams %R","data":[{"x": "2026-03-31", "y": 100000.91}, {"x": "2026-03-31", "y": 100133.83}, {"x": "2026-03-31", "y": 101897.35}, {"x": "2026-04-01", "y": 102827.34}, {"x": "2026-04-01", "y": 106034.88}],"borderColor":"#4a9eff","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"ATR Keltner Channel","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100085.18}, {"x": "2026-03-31", "y": 102533.45}, {"x": "2026-04-01", "y": 104145.0}, {"x": "2026-04-01", "y": 103225.15}],"borderColor":"#ff6b6b","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"RSI Mean Reversion","data":[{"x": "2026-03-31", "y": 100002.79}, {"x": "2026-03-31", "y": 100093.89}, {"x": "2026-03-31", "y": 101705.94}, {"x": "2026-04-01", "y": 102347.1}, {"x": "2026-04-01", "y": 103142.52}],"borderColor":"#ffd93d","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"20-Day Breakout","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#c77dff","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Bollinger Bands","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#ff9f43","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"EMA Crossover 9/21","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#00d2d3","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"MA Crossover 50/200","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#ff6348","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"MACD Crossover","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#a29bfe","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"RSI + Volume","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}, {"x": "2026-04-01", "y": 100000.0}],"borderColor":"#55efc4","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3}];
 if (stratDatasets.length > 0) {
   new Chart(document.getElementById('stratChart'), {
     type: 'line',
