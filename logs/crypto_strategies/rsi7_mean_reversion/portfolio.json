@@ -1,0 +1,15 @@
+{
+  "cash": 250.0,
+  "starting_cash": 100000.0,
+  "positions": {
+    "SOL-USD": {
+      "qty": 1131.2217194570135,
+      "avg_price": 83.98
+    },
+    "AVAX-USD": {
+      "qty": 523.1277533039647,
+      "avg_price": 9.08
+    }
+  },
+  "peak_value": 100000.0
+}
