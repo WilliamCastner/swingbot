@@ -1,0 +1,3 @@
+timestamp,symbol,side,qty,price,pnl,reason
+2026-03-31T11:06:10.862222,AMD,BUY,479.8707,197.97,0.0,%R=-80.4 oversold (<-80)
+2026-03-31T11:06:10.862222,COIN,BUY,28.3904,167.31,0.0,%R=-83.9 oversold (<-80)

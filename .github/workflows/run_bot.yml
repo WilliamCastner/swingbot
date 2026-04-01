@@ -1,0 +1,48 @@
+name: SwingBot Daily Run
+
+on:
+  schedule:
+    - cron: '15 21 * * 1-5'  # 4:15pm EST (5:15pm EDT) Mon-Fri
+  workflow_dispatch:           # allows manual trigger from GitHub UI
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create .env from secrets
+        run: |
+          echo "ALPACA_API_KEY=${{ secrets.ALPACA_API_KEY }}" >> .env
+          echo "ALPACA_SECRET_KEY=${{ secrets.ALPACA_SECRET_KEY }}" >> .env
+          echo "ALPACA_PAPER=true" >> .env
+
+      - name: Run all 10 strategy simulations
+        run: python scripts/run_strategies.py
+
+      - name: Run main bot
+        run: python scripts/run_bot.py --paper
+
+      - name: Generate dashboard
+        run: python scripts/dashboard.py --no-browser
+
+      - name: Commit and push results
+        run: |
+          git config user.name "SwingBot"
+          git config user.email "swingbot@users.noreply.github.com"
+          git add logs/ dashboard.html
+          git diff --staged --quiet || git commit -m "Daily run $(date -u +%Y-%m-%d)"
+          git push

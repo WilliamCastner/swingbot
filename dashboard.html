@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SwingBot Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0d0d0d;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;padding:24px;max-width:1400px;margin:0 auto}
+  h1{font-size:1.4rem;font-weight:600;margin-bottom:4px}
+  h2{font-size:1rem;font-weight:600;margin:28px 0 14px}
+  .sub{color:#666;font-size:0.85rem;margin-bottom:28px}
+  .cards{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+  .card{background:#161616;border:1px solid #222;border-radius:10px;padding:18px 22px;min-width:140px;flex:1}
+  .card .label{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  .card .val{font-size:1.45rem;font-weight:700}
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+  .chart-box{background:#161616;border:1px solid #222;border-radius:10px;padding:18px}
+  .chart-box .chart-title{font-size:0.75rem;color:#555;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
+  .chart-box.full{grid-column:1/-1}
+  table{width:100%;border-collapse:collapse;background:#161616;border-radius:10px;overflow:hidden;border:1px solid #222;margin-bottom:28px}
+  th{padding:10px 14px;text-align:left;font-size:0.72rem;color:#444;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #222}
+  td{padding:10px 14px;font-size:0.88rem;border-bottom:1px solid #1a1a1a}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#1c1c1c}
+  .section-label{font-size:0.72rem;color:#444;text-transform:uppercase;letter-spacing:.08em;margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid #1e1e1e}
+  @media(max-width:700px){.charts{grid-template-columns:1fr}.chart-box.full{grid-column:1}}
+</style>
+</head>
+<body>
+
+<h1>SwingBot Dashboard</h1>
+<div class="sub">Updated 2026-03-31 11:54 &nbsp;·&nbsp; Paper trading &nbsp;·&nbsp; NVDA · TSLA · AMD · COIN · SPY</div>
+
+<!-- ── Main Bot Summary ───────────────────────────────────────── -->
+<div class="section-label">Main Bot (Alpaca Paper)</div>
+<div class="cards">
+  <div class="card">
+    <div class="label">Portfolio Value</div>
+    <div class="val">$100,000.00</div>
+  </div>
+  <div class="card">
+    <div class="label">Total P&amp;L</div>
+    <div class="val" style="color:#00c896">+$0.00</div>
+  </div>
+  <div class="card">
+    <div class="label">Total Return</div>
+    <div class="val" style="color:#00c896">+0.00%</div>
+  </div>
+  <div class="card">
+    <div class="label">Max Drawdown</div>
+    <div class="val" style="color:#aaa">0.00%</div>
+  </div>
+  <div class="card">
+    <div class="label">Trades</div>
+    <div class="val">2</div>
+  </div>
+</div>
+
+<div class="charts">
+  <div class="chart-box">
+    <div class="chart-title">Portfolio Value</div>
+    <canvas id="valueChart" height="160"></canvas>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title">Drawdown %</div>
+    <canvas id="ddChart" height="160"></canvas>
+  </div>
+</div>
+
+<!-- ── Strategy Leaderboard ───────────────────────────────────── -->
+<div class="section-label">Strategy Comparison (10 Virtual Portfolios · $100k each)</div>
+<table>
+  <thead>
+    <tr><th>#</th><th>Strategy</th><th>Value</th><th>Return</th><th>P&amp;L</th><th>Drawdown</th><th>Trades</th></tr>
+  </thead>
+  <tbody>
+        <tr>
+          <td style="color:#666">🥇</td>
+          <td><strong>ATR Keltner Channel</strong></td>
+          <td>$102,533.45</td>
+          <td style="color:#00c896;font-weight:700">+2.53%</td>
+          <td style="color:#00c896">+$2,533.45</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td style="color:#666">🥈</td>
+          <td><strong>Stochastic Oscillator</strong></td>
+          <td>$101,897.35</td>
+          <td style="color:#00c896;font-weight:700">+1.90%</td>
+          <td style="color:#00c896">+$1,897.35</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td style="color:#666">🥉</td>
+          <td><strong>Williams %R</strong></td>
+          <td>$101,897.35</td>
+          <td style="color:#00c896;font-weight:700">+1.90%</td>
+          <td style="color:#00c896">+$1,897.35</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td style="color:#666">4.</td>
+          <td><strong>RSI Mean Reversion</strong></td>
+          <td>$101,705.94</td>
+          <td style="color:#00c896;font-weight:700">+1.71%</td>
+          <td style="color:#00c896">+$1,705.94</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td style="color:#666">5.</td>
+          <td><strong>20-Day Breakout</strong></td>
+          <td>$100,000.00</td>
+          <td style="color:#00c896;font-weight:700">+0.00%</td>
+          <td style="color:#00c896">+$0.00</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td style="color:#666">6.</td>
+          <td><strong>Bollinger Bands</strong></td>
+          <td>$100,000.00</td>
+          <td style="color:#00c896;font-weight:700">+0.00%</td>
+          <td style="color:#00c896">+$0.00</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td style="color:#666">7.</td>
+          <td><strong>EMA Crossover 9/21</strong></td>
+          <td>$100,000.00</td>
+          <td style="color:#00c896;font-weight:700">+0.00%</td>
+          <td style="color:#00c896">+$0.00</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td style="color:#666">8.</td>
+          <td><strong>MA Crossover 50/200</strong></td>
+          <td>$100,000.00</td>
+          <td style="color:#00c896;font-weight:700">+0.00%</td>
+          <td style="color:#00c896">+$0.00</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td style="color:#666">9.</td>
+          <td><strong>MACD Crossover</strong></td>
+          <td>$100,000.00</td>
+          <td style="color:#00c896;font-weight:700">+0.00%</td>
+          <td style="color:#00c896">+$0.00</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td style="color:#666">10.</td>
+          <td><strong>RSI + Volume</strong></td>
+          <td>$100,000.00</td>
+          <td style="color:#00c896;font-weight:700">+0.00%</td>
+          <td style="color:#00c896">+$0.00</td>
+          <td style="color:#ff4d4d">0.00%</td>
+          <td>0</td>
+        </tr></tbody>
+</table>
+
+<!-- ── Strategy Equity Curves ─────────────────────────────────── -->
+<div class="charts">
+  <div class="chart-box full">
+    <div class="chart-title">Strategy Equity Curves — All 10 Strategies</div>
+    <canvas id="stratChart" height="90"></canvas>
+  </div>
+</div>
+
+<!-- ── Trade Log ──────────────────────────────────────────────── -->
+<div class="section-label">Main Bot Trade Log</div>
+<table>
+  <thead>
+    <tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Price</th><th>RSI</th><th>Reason</th></tr>
+  </thead>
+  <tbody>
+        <tr>
+          <td>2026-03-31 11:54</td><td><strong>TSLA</strong></td>
+          <td style="color:#00c896;font-weight:700">BUY</td>
+          <td>256.9026</td><td>$369.79</td>
+          <td>34.0</td>
+          <td style="color:#aaa;font-size:0.85em">RSI=34.0 < 40, price near MA</td>
+        </tr>
+        <tr>
+          <td>2026-03-31 11:54</td><td><strong>NVDA</strong></td>
+          <td style="color:#00c896;font-weight:700">BUY</td>
+          <td>548.2773</td><td>$173.27</td>
+          <td>36.6</td>
+          <td style="color:#aaa;font-size:0.85em">RSI=36.6 < 40, price near MA</td>
+        </tr></tbody>
+</table>
+
+<script>
+const gridColor = 'rgba(255,255,255,0.04)';
+const tickColor = '#444';
+
+// Main bot — portfolio value
+new Chart(document.getElementById('valueChart'), {
+  type: 'line',
+  data: {
+    labels: ["2026-03-31", "2026-03-31", "2026-03-31"],
+    datasets: [{
+      data: [100000.0, 100000.0, 100000.0],
+      borderColor: '#00c896', backgroundColor: 'rgba(0,200,150,0.07)',
+      borderWidth: 2, pointRadius: 0, fill: true, tension: 0.3,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: tickColor, maxTicksLimit: 5 }, grid: { color: gridColor } },
+      y: { ticks: { color: tickColor, callback: v => '$' + v.toLocaleString() }, grid: { color: gridColor } }
+    }
+  }
+});
+
+// Main bot — drawdown
+new Chart(document.getElementById('ddChart'), {
+  type: 'line',
+  data: {
+    labels: ["2026-03-31", "2026-03-31", "2026-03-31"],
+    datasets: [{
+      data: [0.0, 0.0, 0.0],
+      borderColor: '#ff4d4d', backgroundColor: 'rgba(255,77,77,0.07)',
+      borderWidth: 2, pointRadius: 0, fill: true, tension: 0.3,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: tickColor, maxTicksLimit: 5 }, grid: { color: gridColor } },
+      y: { ticks: { color: tickColor, callback: v => v + '%' }, grid: { color: gridColor } }
+    }
+  }
+});
+
+// Strategy equity curves
+const stratDatasets = [{"label":"ATR Keltner Channel","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100085.18}, {"x": "2026-03-31", "y": 102533.45}],"borderColor":"#00c896","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Stochastic Oscillator","data":[{"x": "2026-03-31", "y": 100000.91}, {"x": "2026-03-31", "y": 100133.83}, {"x": "2026-03-31", "y": 101897.35}],"borderColor":"#4a9eff","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Williams %R","data":[{"x": "2026-03-31", "y": 100000.91}, {"x": "2026-03-31", "y": 100133.83}, {"x": "2026-03-31", "y": 101897.35}],"borderColor":"#ff6b6b","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"RSI Mean Reversion","data":[{"x": "2026-03-31", "y": 100002.79}, {"x": "2026-03-31", "y": 100093.89}, {"x": "2026-03-31", "y": 101705.94}],"borderColor":"#ffd93d","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"20-Day Breakout","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}],"borderColor":"#c77dff","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"Bollinger Bands","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}],"borderColor":"#ff9f43","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"EMA Crossover 9/21","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}],"borderColor":"#00d2d3","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"MA Crossover 50/200","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}],"borderColor":"#ff6348","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"MACD Crossover","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}],"borderColor":"#a29bfe","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3},{"label":"RSI + Volume","data":[{"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}, {"x": "2026-03-31", "y": 100000.0}],"borderColor":"#55efc4","backgroundColor":"transparent","borderWidth":2,"pointRadius":0,"tension":0.3}];
+if (stratDatasets.length > 0) {
+  new Chart(document.getElementById('stratChart'), {
+    type: 'line',
+    data: { datasets: stratDatasets },
+    options: {
+      parsing: false,
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#666', boxWidth: 12, font: { size: 11 } }
+        }
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: { unit: 'day' },
+          ticks: { color: tickColor, maxTicksLimit: 8 },
+          grid: { color: gridColor }
+        },
+        y: {
+          ticks: { color: tickColor, callback: v => '$' + v.toLocaleString() },
+          grid: { color: gridColor }
+        }
+      }
+    }
+  });
+} else {
+  document.getElementById('stratChart').parentElement.innerHTML +=
+    '<p style="color:#555;text-align:center;padding:40px 0">Run scripts/run_strategies.py to populate strategy data.</p>';
+}
+</script>
+</body>
+</html>
