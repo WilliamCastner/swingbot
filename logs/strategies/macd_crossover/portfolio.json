@@ -1,6 +1,15 @@
 {
-  "cash": 100000.0,
+  "cash": 250.0,
   "starting_cash": 100000.0,
-  "positions": {},
+  "positions": {
+    "NVDA": {
+      "qty": 535.5431535035797,
+      "avg_price": 177.39
+    },
+    "SPY": {
+      "qty": 7.242730585670066,
+      "avg_price": 655.83
+    }
+  },
   "peak_value": 100000.0
 }
