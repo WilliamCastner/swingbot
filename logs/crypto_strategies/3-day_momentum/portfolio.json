@@ -1,11 +1,7 @@
 {
-  "cash": 250.0,
+  "cash": 89345.0226244344,
   "starting_cash": 100000.0,
   "positions": {
-    "SOL-USD": {
-      "qty": 1131.2217194570135,
-      "avg_price": 83.98
-    },
     "ETH-USD": {
       "qty": 2.2381695071786343,
       "avg_price": 2122.27
