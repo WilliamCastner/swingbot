@@ -1,0 +1,2 @@
+timestamp,symbol,side,qty,price,pnl,reason
+2026-04-08T22:01:29.523091,AMD,BUY,409.8007,231.82,0.0,Broke above 20-day high $226.31

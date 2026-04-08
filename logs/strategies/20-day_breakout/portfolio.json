@@ -1,6 +1,11 @@
 {
-  "cash": 100000.0,
+  "cash": 5000.0,
   "starting_cash": 100000.0,
-  "positions": {},
+  "positions": {
+    "AMD": {
+      "qty": 409.80070744543184,
+      "avg_price": 231.82
+    }
+  },
   "peak_value": 100000.0
 }
