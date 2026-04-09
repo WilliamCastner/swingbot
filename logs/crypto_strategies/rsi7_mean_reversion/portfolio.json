@@ -1,11 +1,6 @@
 {
-  "cash": 94389.16026720751,
+  "cash": 99332.97909980663,
   "starting_cash": 100000.0,
-  "positions": {
-    "DOGE-USD": {
-      "qty": 54931.320362212435,
-      "avg_price": 0.09
-    }
-  },
+  "positions": {},
   "peak_value": 100000.0
 }
