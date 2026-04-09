@@ -1,2 +1,3 @@
 timestamp,symbol,side,qty,price,order_id,reason
 2026-03-31T21:41:36.971718,SOLUSD,BUY,45.00245565,82.558517,76c7266e-aef2-4da3-9587-abdca7017c8c,RSI(7)=16.4 oversold
+2026-04-09T16:57:53.650791,SOLUSD,SELL,44.93495197,83.210342,8e03e0cb-394a-4f2e-80fd-4d15a832bec5,RSI(7)=65.4 overbought
