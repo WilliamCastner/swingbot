@@ -1,10 +1,10 @@
 {
-  "cash": 4460.617410726976,
+  "cash": 4408.157334235424,
   "starting_cash": 100000.0,
   "positions": {
-    "ETH-USD": {
-      "qty": 35.772299005492336,
-      "avg_price": 2369.2
+    "DOGE-USD": {
+      "qty": 837549.8935047289,
+      "avg_price": 0.1
     }
   },
   "peak_value": 100000.0
