@@ -1,5 +1,5 @@
 {
-  "cash": 250.0,
+  "cash": 12.5,
   "starting_cash": 100000.0,
   "positions": {
     "AMD": {
@@ -9,6 +9,10 @@
     "SPY": {
       "qty": 6.98621876424821,
       "avg_price": 679.91
+    },
+    "NVDA": {
+      "qty": 1.2085898936440893,
+      "avg_price": 196.51
     }
   },
   "peak_value": 100000.0
