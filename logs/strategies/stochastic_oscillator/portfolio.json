@@ -1,11 +1,6 @@
 {
-  "cash": 10466.56978872131,
+  "cash": 118501.22558784919,
   "starting_cash": 100000.0,
-  "positions": {
-    "TSLA": {
-      "qty": 275.63376910097685,
-      "avg_price": 360.59
-    }
-  },
+  "positions": {},
   "peak_value": 100000.0
 }
