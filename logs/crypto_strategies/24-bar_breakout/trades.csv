@@ -1,2 +1,3 @@
 timestamp,symbol,side,qty,price,pnl,reason
 2026-04-14T01:45:35.035947,ETH-USD,BUY,40.09792335,2369.2,0.0,Broke 24-bar high $2327.4578
+2026-04-16T20:39:44.733435,DOGE-USD,BUY,47500.0,0.1,0.0,Broke 24-bar high $0.0977
