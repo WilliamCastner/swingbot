@@ -22,3 +22,4 @@ timestamp,symbol,side,qty,price,pnl,reason
 2026-04-14T16:56:40.469284,DOGE-USD,BUY,837549.89350473,0.1,0.0,"3d momentum=2.44%, accel=2.03%"
 2026-04-15T09:10:58.687004,ETH-USD,BUY,1.80164751,2324.4,0.0,"3d momentum=6.03%, accel=4.37%"
 2026-04-16T09:09:55.355040,ETH-USD,SELL,1.80164751,2342.0,31.71,"3d momentum=-1.21%, accel=-8.84%"
+2026-04-17T09:09:02.510246,SOL-USD,BUY,47.46649802,88.86,0.0,"3d momentum=6.07%, accel=3.37%"
