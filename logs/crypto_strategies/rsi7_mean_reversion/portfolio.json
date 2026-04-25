@@ -1,14 +1,10 @@
 {
-  "cash": 248.3324477495171,
+  "cash": 4966.6489549903345,
   "starting_cash": 100000.0,
   "positions": {
     "SOL-USD": {
       "qty": 1102.1528865313746,
       "avg_price": 85.62
-    },
-    "DOGE-USD": {
-      "qty": 47183.16507240817,
-      "avg_price": 0.1
     }
   },
   "peak_value": 100000.0
