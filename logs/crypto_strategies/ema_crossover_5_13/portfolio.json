@@ -1,6 +1,11 @@
 {
-  "cash": 105290.45477952794,
+  "cash": 5264.522738976404,
   "starting_cash": 100000.0,
-  "positions": {},
+  "positions": {
+    "ETH-USD": {
+      "qty": 43.00932718196464,
+      "avg_price": 2325.68
+    }
+  },
   "peak_value": 100000.0
 }
