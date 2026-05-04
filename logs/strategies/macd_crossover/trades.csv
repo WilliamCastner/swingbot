@@ -3,3 +3,4 @@ timestamp,symbol,side,qty,price,pnl,reason
 2026-04-02T21:54:05.774503,SPY,BUY,7.2427,655.83,0.0,MACD crossed above signal (hist=0.3748)
 2026-04-14T22:07:00.546485,TSLA,BUY,0.6521,364.2,0.0,MACD crossed above signal (hist=0.4379)
 2026-05-01T22:07:08.821456,NVDA,SELL,535.5432,198.45,11278.54,MACD crossed below signal (hist=-0.1112)
+2026-05-04T22:15:59.944707,COIN,BUY,497.4456,202.99,0.0,MACD crossed above signal (hist=0.0452)
