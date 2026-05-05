@@ -1,10 +1,14 @@
 {
-  "cash": 5264.522738976404,
+  "cash": 263.22613694882057,
   "starting_cash": 100000.0,
   "positions": {
     "ETH-USD": {
       "qty": 43.00932718196464,
       "avg_price": 2325.68
+    },
+    "AVAX-USD": {
+      "qty": 528.6782877407593,
+      "avg_price": 9.46
     }
   },
   "peak_value": 100000.0
